@@ -1,0 +1,92 @@
+api:
+  name: "Book RAG Chatbot API"
+  base_url: "http://localhost:8000"
+
+  endpoints:
+    - name: "Health Check"
+      method: "GET"
+      path: "/health"
+      description: "Returns API status."
+      response:
+        200:
+          body:
+            status: "ok"
+            detail: "service running"
+
+    - name: "Ingest Book"
+      method: "POST"
+      path: "/ingest"
+      description: >
+        Reads markdown files of the Docusaurus book from a local folder,
+        chunks them, creates embeddings, and uploads to Qdrant.
+      request:
+        body:
+          type: "json"
+          properties:
+            docs_path:
+              type: "string"
+              description: "Path to Docusaurus docs folder."
+              example: "../Ai-Spec-Driven/docs"
+      response:
+        200:
+          body:
+            status: "success"
+            chunks_ingested: "integer"
+
+    - name: "Query Book (Global RAG)"
+      method: "POST"
+      path: "/query"
+      description: "Ask a question over the entire book content."
+      request:
+        body:
+          type: "json"
+          properties:
+            question:
+              type: "string"
+              required: true
+            top_k:
+              type: "integer"
+              default: 5
+            mode:
+              type: "string"
+              enum: ["answer", "explain", "summarize"]
+              default: "answer"
+      response:
+        200:
+          body:
+            answer: "string"
+            sources:
+              type: "array"
+              items:
+                file: "string"
+                section: "string"
+                score: "number"
+
+    - name: "Query Selected Text (Context-only)"
+      method: "POST"
+      path: "/query-selected"
+      description: >
+        Answer a question based only on user-provided selected text
+        from the book.
+      request:
+        body:
+          type: "json"
+          properties:
+            selected_text:
+              type: "string"
+              required: true
+            question:
+              type: "string"
+              required: true
+      response:
+        200:
+          body:
+            answer: "string"
+
+  error_handling:
+    - use_422_for_validation_errors: true
+    - return_json_errors: true
+
+  security:
+    - hackathon_mode: "no auth"
+    - future_extension: "API key or JWT possible"

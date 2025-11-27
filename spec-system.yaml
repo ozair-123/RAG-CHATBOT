@@ -1,0 +1,49 @@
+system:
+  name: "Book RAG Chatbot"
+  description: >
+    A Retrieval-Augmented Generation (RAG) chatbot for the
+    "AI-Driven & Spec-Driven Development Handbook" Docusaurus site.
+    Users can ask questions about the book and also select text
+    in the book and ask questions specifically about that selection.
+
+  goals:
+    - Answer questions grounded strictly in the book content.
+    - Support two modes:
+      - Global book QA (full-book RAG).
+      - Selected-text QA (context-limited).
+    - Expose a clean FastAPI backend.
+    - Integrate with OpenAI Agents SDK and ChatKit.
+    - Use Qdrant Cloud Free Tier as vector store.
+  non_goals:
+    - General web search.
+    - Multi-user auth or account system.
+    - Heavy analytics or logging (only basic logging).
+
+  tech_stack:
+    backend:
+      language: "Python 3.11+"
+      framework: "FastAPI"
+    ai:
+      llm_provider: "OpenAI"
+      agents_sdk: "OpenAI Agents SDK"
+      chat_ui_sdk: "OpenAI ChatKit SDK"
+      embedding_model: "text-embedding-3-large"
+    vector_db:
+      provider: "Qdrant Cloud Free Tier"
+      collection_name: "ai_spec_driven_book"
+    hosting:
+      backend: "any (local for hackathon is fine)"
+      frontend: "Docusaurus (existing GitHub Pages site)"
+
+  runtime_requirements:
+    env_vars:
+      - "OPENAI_API_KEY"
+      - "QDRANT_URL"
+      - "QDRANT_API_KEY"
+    ports:
+      fastapi: 8000
+
+  constraints:
+    - RAG must never answer outside book content when in strict mode.
+    - Selected-text mode must only use provided text as context.
+    - Responses should be short, clear, and educational.

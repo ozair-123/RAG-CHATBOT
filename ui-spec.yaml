@@ -1,0 +1,41 @@
+ui:
+  embedding_target:
+    type: "docusaurus_page"
+    path: "../Ai-Spec-Driven"
+    integration_type: "React component + ChatKit"
+
+  chat_widget:
+    location:
+      type: "floating_button"
+      position: "bottom-right"
+    behavior:
+      modes:
+        - id: "book_qa"
+          label: "Ask about the book"
+          description: "Ask any question about the whole handbook."
+        - id: "selection_qa"
+          label: "Ask from selected text"
+          description: "Select text in the book, then ask a question about it."
+
+    features:
+      - show_message_history
+      - show_sources
+      - loading_indicator
+      - error_banner
+
+  selection_flow:
+    description: >
+      User selects text in the rendered doc page, clicks
+      "Ask about this selection", a modal opens with:
+      - selected text preview
+      - question input
+      - send button
+    implementation_hint:
+      - Use `window.getSelection()` in the Docusaurus doc page.
+      - Pass selected text to backend via `/query-selected`.
+
+  api_integration:
+    backend_base_url: "http://localhost:8000"
+    endpoints:
+      book_qa: "/query"
+      selection_qa: "/query-selected"

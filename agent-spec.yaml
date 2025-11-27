@@ -1,0 +1,31 @@
+agents:
+  main_agent:
+    name: "BookRAGAgent"
+    description: "Agent that answers questions about the AI Spec-Driven book."
+    tools:
+      - name: "search_book_rag"
+        description: "Search Qdrant for relevant book chunks and return them."
+        input_schema:
+          question: "string"
+          top_k: "integer (optional)"
+      - name: "answer_from_selected_text"
+        description: "Answer a question using only user-selected text as context."
+        input_schema:
+          selected_text: "string"
+          question: "string"
+
+    behavior:
+      style: "concise, educational, friendly"
+      max_answer_tokens: 400
+      avoid:
+        - hallucinations
+        - content not supported by book
+        - over-technical jargon without explanation
+
+  subagents:
+    - name: "RetrieverAgent"
+      role: "Calls Qdrant, returns ranked chunks."
+    - name: "AnswerAgent"
+      role: "Composes final answer from context and question."
+    - name: "SelectedTextAgent"
+      role: "Handles selected-text only questions."

@@ -1,0 +1,57 @@
+rag:
+  collection_name: "ai_spec_driven_book"
+  distance_metric: "Cosine"
+  vector_size: "use embedding model default"
+
+  data_source:
+    type: "markdown"
+    path: "../Ai-Spec-Driven/docs"
+    include_extensions: [".md", ".mdx"]
+
+  chunking:
+    strategy: "sliding_window"
+    chunk_size_chars: 1000
+    chunk_overlap_chars: 200
+    min_chunk_chars: 300
+    metadata:
+      - "file_path"
+      - "relative_path"
+      - "heading"
+      - "chapter"
+      - "section"
+
+  embedding:
+    provider: "Google"
+    model: "text-embedding-3-large"
+    batch_size: 16
+
+  retrieval:
+    top_k_default: 5
+    score_threshold: 0.2
+
+  prompt_templates:
+    global_answer: |
+      You are a helpful assistant answering questions about the book
+      "AI-Driven & Spec-Driven Development Handbook".
+
+      Use ONLY the context passages below from the book.
+
+      Question:
+      {question}
+
+      Context:
+      {context}
+
+      Answer clearly in 3-6 sentences.
+
+    selected_text_answer: |
+      You are answering based ONLY on the selected text from the book
+      "AI-Driven & Spec-Driven Development Handbook".
+
+      Selected Text:
+      {selected_text}
+
+      Question:
+      {question}
+
+      If the selected text does not contain the answer, say so honestly.
